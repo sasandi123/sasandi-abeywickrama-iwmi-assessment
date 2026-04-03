@@ -13,9 +13,9 @@ class BasicPreprocessing:
     def __init__(self):
         #setting up paths and config
         self.data_dir= None
-        self.train_dir="data/train"
-        self.val_dir="data/val"
-        self.test_dir="data/test"
+        self.train_dir = "../data/train"
+        self.val_dir = "../data/val"
+        self.test_dir = "../data/test"
         self.img_size=(128,128)
         self.batch_size=32
         self.class_names=["with_mask","without_mask"]
@@ -24,11 +24,11 @@ class BasicPreprocessing:
         # reading all image paths and labels from the dataset folder
         image_paths =[]
         labels=[]
-        dataset_path="dataset"
+        dataset_path = "../dataset/Data Science - Dataset/data"
 
         for label in self.class_names:
             class_folder=os.path.join(dataset_path,label)
-            if not os.path.join(dataset_path,label):
+            if not os.path.exists(class_folder):
                 print(f"[WARNING] Folder not found: {class_folder}")
                 continue
             for fname in os.listdir(class_folder):
@@ -40,33 +40,33 @@ class BasicPreprocessing:
         print(df["label"].value_counts())
         return df
 
-    def split_and_copy_dataset(selfself, df):
+    def split_and_copy_dataset(self, df):
         #70/15/15 split
-        train_df, temp_df = train_test_split(df,test_size=0.30,strtify=df["label"], random_state=42)
+        train_df, temp_df = train_test_split(df,test_size=0.30,stratify=df["label"], random_state=42)
         val_df, test_df = train_test_split(temp_df, test_size=0.50, stratify=temp_df["label"], random_state=42)
         print(f"Train: {len(train_df)} | Val: {len(val_df)} | Test: {len(test_df)}")
         for split_name, split_df in [("train", train_df), ("val", val_df), ("test", test_df)]:
             for _, row in split_df.iterrows():
                 label = row["label"]
-                dest_folder = os.path.join(f"data/{split_name}", label)
+                dest_folder = os.path.join(f"../data/{split_name}", label)
                 os.makedirs(dest_folder, exist_ok=True)
                 shutil.copy(row["image_path"], dest_folder)
-            return train_df, val_df, test_df
+        return train_df, val_df, test_df
 
     def check_class_distribution(self, df):
         #checking for class imbalance before training
         counts = df["label"].value_counts()
         plt.figure(figsize=(6,4))
-        counts.plot(kind="bar", color=["steel blue", "coral"])
+        counts.plot(kind="bar", color=["steelblue", "coral"])
         plt.title("Class Distribution in Dataset")
         plt.xlabel("Class")
         plt.ylabel("Number of Images")
         plt.xticks(rotation=0)
         plt.tight_layout()
-        plt.savefig("results/class_distribution.png")
+        os.makedirs("../results", exist_ok=True)
+        plt.savefig("../results/class_distribution.png")
         plt.show()
         print(counts)
-
 
     def get_data_generators(self):
         # augmentation only on training data - val/test only gets normalized
@@ -122,7 +122,8 @@ class BasicPreprocessing:
 
         plt.suptitle("Sample Images from Dataset", fontsize=14)
         plt.tight_layout()
-        plt.savefig("results/sample_images.png")
+        os.makedirs("../results", exist_ok=True)
+        plt.savefig("../results/sample_images.png")
         plt.show()
         print("Sample visualizations saved")
 
@@ -137,4 +138,3 @@ def main():
     print("Preprocessing done. Data splits ready")
 
 main()
-
