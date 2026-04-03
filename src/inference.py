@@ -113,5 +113,31 @@ class BasicInference:
         }
         return result
 
+    def evaluate_on_test_set(self, test_generator):
+        # full evaluation - accuracy alone is not enough, using f1 and auc as well
+        print("Running evaluation on test set...")
+        test_generator.reset()
+
+        y_pred_probs = self.model.predict(test_generator, verbose=1)
+        y_pred = (y_pred_probs >= 0.5).astype(int).flatten()
+        y_true = test_generator.classes
+
+        acc = accuracy_score(y_true, y_pred)
+        prec = precision_score(y_true, y_pred)
+        rec = recall_score(y_true, y_pred)
+        f1 = f1_score(y_true, y_pred)
+        auc = roc_auc_score(y_true, y_pred_probs)
+
+        print(f"\n--- Evaluation Metrics ---")
+        print(f"Accuracy  : {acc:.4f}")
+        print(f"Precision : {prec:.4f}")
+        print(f"Recall    : {rec:.4f}")
+        print(f"F1-Score  : {f1:.4f}")
+        print(f"AUC-ROC   : {auc:.4f}")
+        print("\nClassification Report:")
+        print(classification_report(y_true, y_pred, target_names=self.class_names))
+
+        return y_true, y_pred, y_pred_probs
+
 
 
