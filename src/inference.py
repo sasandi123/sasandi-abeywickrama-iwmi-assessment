@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Any additional libraries go under here
+# Additional libraries
 from tensorflow.keras.models import load_model
 from sklearn.metrics import (
     classification_report, confusion_matrix,
@@ -94,4 +94,24 @@ class BasicInference:
         plt.show()
 
         return result_img, faces
+
+    def predict_single_image(self, image_path):
+        # programmatic version - used by the streamlit app
+        img = cv2.imread(image_path)
+        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img_resized = cv2.resize(img_rgb, self.img_size)
+        img_normalized = img_resized / 255.0
+        img_input = np.expand_dims(img_normalized, axis=0)
+
+        prediction = self.model.predict(img_input, verbose=0)[0][0]
+
+        result = {
+            "prediction": "With Mask" if prediction < 0.5 else "Without Mask",
+            "confidence_with_mask": round((1 - prediction) * 100, 2),
+            "confidence_without_mask": round(prediction * 100, 2),
+            "raw_score": float(prediction)
+        }
+        return result
+
+
 
