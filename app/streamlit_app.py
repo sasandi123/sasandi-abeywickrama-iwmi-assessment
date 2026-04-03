@@ -68,9 +68,52 @@ with st.sidebar:
     |--------|-------|
     | Training Accuracy | 99.13% |
     | Validation Accuracy | 98.76% |
-    | Test Accuracy | update after inference |
-    | AUC-ROC | update after inference |
+    | Test Accuracy | 99% |
+    | AUC-ROC | 0.9971 |
     """)
-    st.caption("Run inference.py for exact test metrics.")
     st.markdown("---")
     st.caption("IWMI Data Science Internship Assessment")
+
+    st.title("Face Mask Detection")
+    st.markdown("Upload an image (.jpg, .jpeg, or .png) to classify whether the person is wearing a mask.")
+    st.markdown("---")
+
+    model = load_trained_model()
+
+    if model is None:
+        st.error(
+            "Trained model not found at models/best_model.keras. "
+            "Please run src/model.py first to train and save the model."
+        )
+        st.stop()
+
+    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+
+    if uploaded_file is not None:
+        pil_image = Image.open(uploaded_file).convert("RGB")
+        image_array = np.array(pil_image)
+
+        col1, col2 = st.columns([1, 1])
+
+        with col1:
+            st.subheader("Uploaded Image")
+            st.image(pil_image, use_container_width=True)
+
+        with col2:
+            st.subheader("Prediction Result")
+
+            with st.spinner("Classifying..."):
+                pred_class, conf_with, conf_without, raw_score = predict(model, image_array)
+
+            if pred_class == "With Mask":
+                st.success(f"Prediction: {pred_class}")
+                st.metric("Confidence", f"{conf_with}%")
+            else:
+                st.error(f"Prediction: {pred_class}")
+                st.metric("Confidence", f"{conf_without}%")
+
+            st.markdown("---")
+            st.markdown("**Confidence Breakdown:**")
+            st.write(f"- With Mask: {conf_with}%")
+            st.write(f"- Without Mask: {conf_without}%")
+            st.write(f"- Raw score: {raw_score:.4f}")
