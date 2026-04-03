@@ -41,6 +41,24 @@ class ModelDevelopment:
             MaxPooling2D(pool_size=(2, 2)),
             Dropout(0.25),
 
+            #--- Block 2 ---
+            #going deeper - learning more complex patterns
+            Conv2D(64, (3, 3), activation="relu", padding="same"),
+            BatchNormalization(),
+            Conv2D(64,(3,3), activation="relu", padding="same"),
+            BatchNormalization(),
+            MaxPooling2D(pool_size=(2, 2)),
+            Dropout(0.25),
+
+            #--- Block 3 ---
+            #highest level spatial features before flatten
+            Conv2D(128, (3, 3), activation="relu", padding="same"),
+            BatchNormalization(),
+            Conv2D(128, (3,3), activation="relu", padding="same"),
+            BatchNormalization(),
+            MaxPooling2D(pool_size=(2, 2)),
+            Dropout(0.30),
+
         ])
 
 
