@@ -68,4 +68,42 @@ class BasicPreprocessing:
         print(counts)
 
 
+    def get_data_generators(self):
+        # augmentation only on training data - val/test only gets normalized
+        train_datagen = ImageDataGenerator(
+            rescale=1.0/255.0,
+            rotation_range=20,
+            width_shift_range=0.15,
+            height_shift_range=0.15,
+            shear_range=0.1,
+            zoom_range=0.2,
+            horizontal_flip=True,
+            fill_mode="nearest"
+        )
+        val_test_datagen = ImageDataGenerator(rescale=1.0/255.0)
+
+        train_generator = train_datagen.flow_from_directory(
+            self.train_dir,
+            target_size=self.img_size,
+            batch_size=self.batch_size,
+            class_mode="binary",
+            shuffle=True
+        )
+        val_generator = val_test_datagen.flow_from_directory(
+            self.val_dir,
+            target_size=self.img_size,
+            batch_size=self.batch_size,
+            class_mode="binary",
+            shuffle=False
+        )
+        test_generator = val_test_datagen.flow_from_directory(
+            self.test_dir,
+            target_size=self.img_size,
+            batch_size=self.batch_size,
+            class_mode="binary",
+            shuffle=False
+        )
+        return train_generator, val_generator, test_generator
+
+
 
