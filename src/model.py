@@ -114,6 +114,75 @@ class ModelDevelopment:
 
         return[checkpoint, lr_scheduler, early_stop]
 
+    def train_model(self,train_generator, val_generator, epochs=40):
+        if self.model is None:
+            print("Model not built yet. Call build_model() first.")
+            return
+
+        callbacks = self.get_callbacks()
+
+        print("Starting training...")
+        self.history = self.model.fit(
+            train_generator,
+            validation_data=val_generator,
+            epochs=epochs,
+            callbacks=callbacks,
+            verbose=1
+        )
+        print("Training complete.")
+        return self.history
+
+    def plot_training_curves(self):
+        #plotting loss and accuracy over epochs to see if model trained well
+        if self.history is None:
+            print("No history found. Train first.")
+            return
+
+        fig, (ax1,ax2) = plt.subplots(1,2,figsize=(14,5))
+
+        ax1.plot(self.history.history['accuracy'], label="Train Accuracy", color="blue")
+        ax1.plot(self.history.history['val_accuracy'], label="Validation Accuracy", color="orange")
+        ax1.set_title("Training vs Validation Accuracy")
+        ax1.set_xlabel("Epoch")
+        ax1.set_ylabel("Accuracy")
+        ax1.legend()
+        ax1.grid(True)
+
+        ax2.plot(self.history.history['loss'], label="Train Loss", color="blue")
+        ax2.plot(self.history.history['val_loss'], label="Validation Loss", color="orange")
+        ax2.set_title("Training vs Validation Loss")
+        ax2.set_xlabel("Epoch")
+        ax2.set_ylabel("Loss")
+        ax2.legend()
+        ax2.grid(True)
+
+        plt.suptitle("Model Training Curves", fontsize=14)
+        plt.tight_layout()
+
+        os.makedirs("results", exist_ok=True)
+        plt.savefig("results/training_curves.png",dpi=150)
+        plt.show()
+        print("Training curves saved.")
+
+def main():
+    print("IWMI Data Science Internship Assessment, I'm not a data scientist")
+
+    from preprocessing import BasicPreprocessing
+    prep = BasicPreprocessing()
+    df = prep.import_dataset()
+    prep.split_and_copy_dataset(df)
+    train_gen, val_gen, _ = prep.get_data_generators()
+
+    dev = ModelDevelopment()
+    dev.build_model()
+    dev.compile_model()
+    dev.train_model(train_gen, val_gen, epochs=40)
+    dev.plot_training_curves()
+
+
+main()
+
+
 
 
 
