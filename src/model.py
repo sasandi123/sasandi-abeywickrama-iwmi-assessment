@@ -76,5 +76,44 @@ class ModelDevelopment:
         self.model = model
         return model
 
+    def compile_model(self):
+        #adam with slightly low lr to be safe at the start
+        self.model.compile(
+            optimizer=Adam(learning_rate=1e-3),
+            loss="binary_crossentropy",
+            metrics=["accuracy"]
+        )
+        print("Model compiled")
+
+    def get_callbacks(self):
+        #saving best model, reducing lr when stuck, stopping early if no progress
+        os.makedirs("models", exist_ok=True)
+
+        checkpoint = ModelCheckpoint(
+            filepath="models/best_model.keras",
+            monitor="val_accuracy",
+            save_best_only=True,
+            mode="max",
+            verbose=1
+        )
+
+        lr_scheduler = ReduceLROnPlateau(
+            monitor="val_loss",
+            factor=0.5,
+            patience=4,
+            min_lr=1e-6,
+            verbose=1
+        )
+
+        early_stop=EarlyStopping(
+            monitor="val_loss",
+            patience=10,
+            restore_best_weights=True,
+            verbose=1
+        )
+
+        return[checkpoint, lr_scheduler, early_stop]
+
+
 
 
