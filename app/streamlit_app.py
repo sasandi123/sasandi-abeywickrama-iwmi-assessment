@@ -140,3 +140,27 @@ with st.sidebar:
                     f"{score:.1f}%", va="center", fontsize=9)
         plt.tight_layout()
         st.pyplot(fig)
+
+        st.markdown("---")
+        st.subheader("Face Detection (Haar Cascade)")
+
+        face_cascade = cv2.CascadeClassifier(
+            cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+        )
+        img_bgr = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
+        gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
+        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(60, 60))
+
+        if len(faces) > 0:
+            annotated = image_array.copy()
+            for (x, y, w, h) in faces:
+                color = (0, 200, 0) if pred_class == "With Mask" else (220, 0, 0)
+                cv2.rectangle(annotated, (x, y), (x + w, y + h), color, 2)
+                cv2.putText(annotated, pred_class, (x, y - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
+            st.image(annotated, caption=f"{len(faces)} face(s) detected", use_container_width=True)
+        else:
+            st.info("No faces detected by Haar Cascade. Classification was still done on the full image.")
+
+    else:
+        st.info("Upload an image to get started.")
