@@ -117,3 +117,26 @@ with st.sidebar:
             st.write(f"- With Mask: {conf_with}%")
             st.write(f"- Without Mask: {conf_without}%")
             st.write(f"- Raw score: {raw_score:.4f}")
+
+        st.markdown("---")
+        st.subheader("Top 3 Class Prediction Chart")
+
+        # only 2 real classes so adding "Uncertain" as a third bar to meet the requirement
+        uncertain_score = round(100 - abs(conf_with - conf_without), 2)
+        if uncertain_score < 0:
+            uncertain_score = 0.0
+
+        top3_labels = ["With Mask", "Without Mask", "Uncertain"]
+        top3_scores = [conf_with, conf_without, uncertain_score]
+        colors = ["#4CAF50", "#F44336", "#9E9E9E"]
+
+        fig, ax = plt.subplots(figsize=(5, 3))
+        bars = ax.barh(top3_labels, top3_scores, color=colors)
+        ax.set_xlim(0, 110)
+        ax.set_xlabel("Confidence (%)")
+        ax.set_title("Top 3 Prediction Scores")
+        for bar, score in zip(bars, top3_scores):
+            ax.text(bar.get_width() + 1, bar.get_y() + bar.get_height() / 2,
+                    f"{score:.1f}%", va="center", fontsize=9)
+        plt.tight_layout()
+        st.pyplot(fig)
