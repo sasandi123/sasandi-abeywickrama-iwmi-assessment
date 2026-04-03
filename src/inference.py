@@ -139,5 +139,40 @@ class BasicInference:
 
         return y_true, y_pred, y_pred_probs
 
+    def plot_confusion_matrix(self, y_true, y_pred):
+        # confusion matrix shows exactly where the model is making mistakes
+        cm = confusion_matrix(y_true, y_pred)
+        plt.figure(figsize=(6, 5))
+        sns.heatmap(
+            cm, annot=True, fmt="d", cmap="Blues",
+            xticklabels=self.class_names,
+            yticklabels=self.class_names
+        )
+        plt.title("Confusion Matrix")
+        plt.xlabel("Predicted Label")
+        plt.ylabel("True Label")
+        plt.tight_layout()
+        os.makedirs("../results", exist_ok=True)
+        plt.savefig("../results/confusion_matrix.png", dpi=150)
+        plt.show()
+        print("Confusion matrix saved.")
+
+    def plot_roc_curve(self, y_true, y_pred_probs):
+        # roc curve - checking tradeoff between true positive and false positive rate
+        fpr, tpr, _ = roc_curve(y_true, y_pred_probs)
+        auc_val = roc_auc_score(y_true, y_pred_probs)
+
+        plt.figure(figsize=(6, 5))
+        plt.plot(fpr, tpr, color="darkorange", lw=2, label=f"AUC = {auc_val:.4f}")
+        plt.plot([0, 1], [0, 1], color="navy", linestyle="--")
+        plt.xlabel("False Positive Rate")
+        plt.ylabel("True Positive Rate")
+        plt.title("ROC Curve")
+        plt.legend(loc="lower right")
+        plt.tight_layout()
+        plt.savefig("../results/roc_curve.png", dpi=150)
+        plt.show()
+        print("ROC curve saved.")
+
 
 
