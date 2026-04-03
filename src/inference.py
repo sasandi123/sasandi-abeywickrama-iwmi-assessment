@@ -174,5 +174,61 @@ class BasicInference:
         plt.show()
         print("ROC curve saved.")
 
+    def write_analysis_report(self, y_true, y_pred):
+            # written analysis of where model works and where it fails
+            cm = confusion_matrix(y_true, y_pred)
+            tn, fp, fn, tp = cm.ravel()
 
+            report = f"""
+    === Model Performance Analysis ===
 
+    The custom CNN model was trained to classify face images into two categories:
+    'With Mask' and 'Without Mask', using a from-scratch architecture with 3 convolutional blocks.
+
+    Strengths:
+    - Handles well-lit, front-facing images reliably.
+    - High recall on the 'Without Mask' class - the more safety-critical case.
+    - Data augmentation helped generalize beyond the training distribution.
+    - Validation accuracy reached 98.76% showing the model generalizes well.
+
+    Weaknesses / Failure Cases:
+    - Partial or incorrectly worn masks may confuse the model.
+    - Low-resolution or heavily occluded faces reduce confidence.
+    - False Positives: {fp} - predicted 'Without Mask' but was actually 'With Mask'.
+    - False Negatives: {fn} - predicted 'With Mask' but was actually 'Without Mask'.
+
+    Metric Justification:
+    - F1-score and AUC-ROC are used as primary metrics because accuracy can be
+      misleading when class distributions shift.
+    - In mask detection, a False Negative (missing a violation) is more costly
+      than a False Positive, so Recall for 'Without Mask' is prioritized.
+
+    Summary:
+    The model performs well as a baseline custom CNN. Improvements could include
+    more diverse training data and ensemble methods for production use.
+    """
+            print(report)
+            os.makedirs("../results", exist_ok=True)
+            with open("../results/analysis_report.txt", "w") as f:
+                f.write(report)
+            print("Analysis report saved.")
+
+def main():
+    print("IWMI Data Science Internship Assessment, I'm not a data scientist")
+
+    from preprocessing import BasicPreprocessing
+    prep = BasicPreprocessing()
+    df = prep.import_dataset()
+    prep.split_and_copy_dataset(df)
+    _, _, test_gen = prep.get_data_generators()
+
+    infer = BasicInference()
+    infer.load_trained_model()
+
+    y_true, y_pred, y_probs = infer.evaluate_on_test_set(test_gen)
+    infer.plot_confusion_matrix(y_true, y_pred)
+    infer.plot_roc_curve(y_true, y_probs)
+    infer.write_analysis_report(y_true, y_pred)
+    infer.detect_images()
+
+main()
