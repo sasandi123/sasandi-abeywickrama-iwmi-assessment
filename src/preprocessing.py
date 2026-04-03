@@ -105,5 +105,36 @@ class BasicPreprocessing:
         )
         return train_generator, val_generator, test_generator
 
+    def visualize_samples(self,df, num_samples=6):
+        #visually verifying images look correct before training
+        fig, axes = plt.subplots(2,3, figsize=(10,7))
+        axes=axes.flatten()
 
+        sample_df = df.sample(n=num_samples, random_state=7)
+
+        for i,(_,row) in enumerate(sample_df.iterrows()):
+            img=cv2.imread(row["image_path"])
+            img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+            img=cv2.resize(img,self.img_size)
+            axes[i].imshow(img)
+            axes[i].set_title(row["label"])
+            axes[i].axis('off')
+
+        plt.suptitle("Sample Images from Dataset", fontsize=14)
+        plt.tight_layout()
+        plt.savefig("results/sample_images.png")
+        plt.show()
+        print("Sample visualizations saved")
+
+#Implementing the main() function
+def main():
+    print("IWMI Data Science Internship Assessment, I'm not a data scientist")
+    prep = BasicPreprocessing()
+    df=prep.import_dataset()
+    prep.check_class_distribution(df)
+    prep.visualize_samples(df)
+    prep.split_and_copy_dataset(df)
+    print("Preprocessing done. Data splits ready")
+
+main()
 
