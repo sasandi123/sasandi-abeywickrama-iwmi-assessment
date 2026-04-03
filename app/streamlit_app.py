@@ -40,3 +40,37 @@ def predict(model, image_array):
 
     return predicted_class, confidence_with_mask, confidence_without_mask, raw_score
 
+
+with st.sidebar:
+    st.title("Model Information")
+    st.markdown("---")
+    st.subheader("Architecture Summary")
+    st.markdown("""
+    **Type:** Custom CNN (built from scratch)
+
+    **Input Size:** 128 x 128 x 3
+
+    **Classes:** With Mask / Without Mask
+
+    **Layers:**
+    - 3 Conv Blocks (32 to 64 to 128 filters)
+    - BatchNormalization after each Conv
+    - MaxPooling (2x2) per block
+    - Dropout (0.25 to 0.40)
+    - GlobalAveragePooling2D
+    - Dense(256) -> Dense(128) -> Dense(1)
+    - Sigmoid output
+    """)
+    st.markdown("---")
+    st.subheader("Achieved Accuracy")
+    st.markdown("""
+    | Metric | Value |
+    |--------|-------|
+    | Training Accuracy | 99.13% |
+    | Validation Accuracy | 98.76% |
+    | Test Accuracy | update after inference |
+    | AUC-ROC | update after inference |
+    """)
+    st.caption("Run inference.py for exact test metrics.")
+    st.markdown("---")
+    st.caption("IWMI Data Science Internship Assessment")
