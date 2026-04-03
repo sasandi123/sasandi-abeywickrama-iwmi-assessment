@@ -29,10 +29,19 @@ class ModelDevelopment:
     def build_model(self):
         #building CNN from scratch
         #3 conv blocks with increasing filters, then dense head
-        Conv2D(32,(3,3), activation="relu", padding="same", input_shape=self.img_size),
-        BatchNormalization(),
-        Conv2D(32,(3,3), activation="relu", padding="same"),
-        BatchNormalization(),
-        MaxPooling2D(pool_size=(2,2)),
-        Dropout(0.25),
+
+        model = Sequential([
+
+            #----- Block 1 -----
+            #learning low level features like edges and colors
+            Conv2D(32, (3, 3), activation="relu", padding="same", input_shape=self.img_size),
+            BatchNormalization(),
+            Conv2D(32, (3, 3), activation="relu", padding="same"),
+            BatchNormalization(),
+            MaxPooling2D(pool_size=(2, 2)),
+            Dropout(0.25),
+
+        ])
+
+
 
