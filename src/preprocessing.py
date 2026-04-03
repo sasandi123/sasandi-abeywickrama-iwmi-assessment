@@ -40,3 +40,32 @@ class BasicPreprocessing:
         print(df["label"].value_counts())
         return df
 
+    def split_and_copy_dataset(selfself, df):
+        #70/15/15 split
+        train_df, temp_df = train_test_split(df,test_size=0.30,strtify=df["label"], random_state=42)
+        val_df, test_df = train_test_split(temp_df, test_size=0.50, stratify=temp_df["label"], random_state=42)
+        print(f"Train: {len(train_df)} | Val: {len(val_df)} | Test: {len(test_df)}")
+        for split_name, split_df in [("train", train_df), ("val", val_df), ("test", test_df)]:
+            for _, row in split_df.iterrows():
+                label = row["label"]
+                dest_folder = os.path.join(f"data/{split_name}", label)
+                os.makedirs(dest_folder, exist_ok=True)
+                shutil.copy(row["image_path"], dest_folder)
+            return train_df, val_df, test_df
+
+    def check_class_distribution(self, df):
+        #checking for class imbalance before training
+        counts = df["label"].value_counts()
+        plt.figure(figsize=(6,4))
+        counts.plot(kind="bar", color=["steel blue", "coral"])
+        plt.title("Class Distribution in Dataset")
+        plt.xlabel("Class")
+        plt.ylabel("Number of Images")
+        plt.xticks(rotation=0)
+        plt.tight_layout()
+        plt.savefig("results/class_distribution.png")
+        plt.show()
+        print(counts)
+
+
+
