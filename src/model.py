@@ -59,7 +59,22 @@ class ModelDevelopment:
             MaxPooling2D(pool_size=(2, 2)),
             Dropout(0.30),
 
+            #--- Fully Connected Head ---
+            GlobalAveragePooling2D(),
+            Dense(256, activation="relu"),
+            BatchNormalization(),
+            Dropout(0.40),
+            Dense(128, activation="relu"),
+            Dropout(0.30),
+
+            #output - sigmoid for binary classification
+            Dense(1, activation="sigmoid")
+
         ])
+
+        model.summary()
+        self.model = model
+        return model
 
 
 
