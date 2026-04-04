@@ -1,0 +1,28 @@
+
+    === Model Performance Analysis ===
+
+    The custom CNN model was trained to classify face images into two categories:
+    'With Mask' and 'Without Mask', using a from-scratch architecture with 3 convolutional blocks.
+
+    Strengths:
+    - Handles well-lit, front-facing images reliably.
+    - High recall on the 'Without Mask' class - the more safety-critical case.
+    - Data augmentation helped generalize beyond the training distribution.
+    - Validation accuracy reached 98.76% showing the model generalizes well.
+
+    Weaknesses / Failure Cases:
+    - Partial or incorrectly worn masks may confuse the model.
+    - Low-resolution or heavily occluded faces reduce confidence.
+    - False Positives: 4 - predicted 'Without Mask' but was actually 'With Mask'.
+    - False Negatives: 10 - predicted 'With Mask' but was actually 'Without Mask'.
+
+    Metric Justification:
+    - F1-score and AUC-ROC are used as primary metrics because accuracy can be
+      misleading when class distributions shift.
+    - In mask detection, a False Negative (missing a violation) is more costly
+      than a False Positive, so Recall for 'Without Mask' is prioritized.
+
+    Summary:
+    The model performs well as a baseline custom CNN. Improvements could include
+    more diverse training data and ensemble methods for production use.
+    
