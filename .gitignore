@@ -24,14 +24,7 @@ env/
 dataset/
 data/
 
-# Model weights - large files
-models/*.keras
-models/*.h5
-models/*.pth
-models/*.pt
-!models/.gitkeep
-
-# Results images (optional to keep)
+# Results images
 # results/
 
 # IDE / OS
