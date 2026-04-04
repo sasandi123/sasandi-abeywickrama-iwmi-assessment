@@ -116,7 +116,10 @@ Built a custom CNN with 3 convolutional blocks from scratch. No transfer learnin
 
 ## Demo
 
-[Screen Recording Demo](https://drive.google.com/file/d/14PxvrKtntYb6b2ZNoRdZjI3HChI_Vr2J/view?usp=sharing)
+[Live App](https://sasandi-abeywickrama-iwmi-assessment-4bofqjstmg9ganakmqfgnn.streamlit.app)
+
+[Screen Recording](https://drive.google.com/file/d/14PxvrKtntYb6b2ZNoRdZjI3HChI_Vr2J/view?usp=sharing)
+
 
 ---
 
