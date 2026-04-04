@@ -24,9 +24,6 @@ env/
 dataset/
 data/
 
-# Results images
-# results/
-
 # IDE / OS
 .idea/
 .vscode/
