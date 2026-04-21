@@ -100,7 +100,7 @@ class ModelDevelopment:
         lr_scheduler = ReduceLROnPlateau(
             monitor="val_loss",
             factor=0.5,
-            patience=4,
+            patience=10,
             min_lr=1e-6,
             verbose=1
         )
